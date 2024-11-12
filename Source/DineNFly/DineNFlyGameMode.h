@@ -13,6 +13,8 @@ class ADineNFlyGameMode : public AGameModeBase
 
 public:
 	ADineNFlyGameMode();
+
+	void StartPlay() override;
 };
 
 
