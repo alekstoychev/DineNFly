@@ -11,17 +11,22 @@
 
 ADineNFlyGameMode::ADineNFlyGameMode()
 {
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
 }
 
 void ADineNFlyGameMode::StartPlay()
 {
 	Super::StartPlay();
+
+	if (!IsValid(PlayerCharacter1.Get()))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(PlayerCharacter)"));
+		return;
+	}
+	if (!IsValid(PlayerCharacter2.Get()))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(PlayerCharacter)"));
+		return;
+	}
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (!IsValid(PlayerController))
@@ -31,13 +36,13 @@ void ADineNFlyGameMode::StartPlay()
 	}
 
 	AActor* PlayerStart1 = FindPlayerStart(PlayerController, "Player1");
-	AActor* PlayerStart2 = FindPlayerStart(PlayerController, "Player2");
-
 	if (!IsValid(PlayerStart1))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(PlayerStart1)"));
 		return;
 	}
+
+	AActor* PlayerStart2 = FindPlayerStart(PlayerController, "Player2");
 	if (!IsValid(PlayerStart2))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(PlayerStart2)"));
@@ -45,8 +50,7 @@ void ADineNFlyGameMode::StartPlay()
 	}
 
 	ADineNFlyCharacter* SpawnedCharacter1 = Cast<ADineNFlyCharacter>(
-		GetWorld()->SpawnActor<AActor>(DefaultPawnClass, PlayerStart1->GetActorLocation(), PlayerStart1->GetActorRotation()));
-
+		GetWorld()->SpawnActor<AActor>(PlayerCharacter1, PlayerStart1->GetActorLocation(), PlayerStart1->GetActorRotation()));
 	if (!IsValid(SpawnedCharacter1))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(SpawnedCharacter1)"));
@@ -54,8 +58,7 @@ void ADineNFlyGameMode::StartPlay()
 	}
 
 	ADineNFlyCharacter* SpawnedCharacter2 = Cast<ADineNFlyCharacter>(
-		GetWorld()->SpawnActor<AActor>(DefaultPawnClass, PlayerStart2->GetActorLocation(), PlayerStart2->GetActorRotation()));
-
+		GetWorld()->SpawnActor<AActor>(PlayerCharacter2, PlayerStart2->GetActorLocation(), PlayerStart2->GetActorRotation()));
 	if (!IsValid(SpawnedCharacter2))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(SpawnedCharacter2)"));

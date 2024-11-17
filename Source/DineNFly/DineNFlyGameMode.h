@@ -15,6 +15,13 @@ public:
 	ADineNFlyGameMode();
 
 	void StartPlay() override;
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> PlayerCharacter1;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> PlayerCharacter2;
 };
 
 
