@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "FoodResource.h"
 #include "DineNFlyCharacter.generated.h"
 
 class UInputMappingContext;
@@ -25,20 +26,29 @@ public:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-	
-protected:
 
+	void SetNearbyStation(class AIInteractableStation* station);
 protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
 private:
-	AActor* ItemHold;
+	UPROPERTY(VisibleAnywhere, Category = "amongus")
+	AFoodResource* ItemHold;
 
+	UPROPERTY(EditAnywhere, Category = "amongus")
+	TSubclassOf<AFoodResource> Debug_FoodTest;
+
+	UPROPERTY(VisibleAnywhere, Category = "amongus")
+	AIInteractableStation* NearbyInteractableStation;
+
+	UPROPERTY()
 	UInputMappingContext* MappingContext;
 
+	UPROPERTY()
 	UInputAction* MoveAction;
 
+	UPROPERTY()
 	UInputAction* InteractAction;
 };
 

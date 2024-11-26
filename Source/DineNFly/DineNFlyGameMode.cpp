@@ -9,6 +9,8 @@
 #include "DineNFlyPlayerController.h"
 #include "DineNFlyAIController.h"
 
+#include "ChoppingStation.h"
+
 ADineNFlyGameMode::ADineNFlyGameMode()
 {
 }
@@ -16,6 +18,13 @@ ADineNFlyGameMode::ADineNFlyGameMode()
 void ADineNFlyGameMode::StartPlay()
 {
 	Super::StartPlay();
+
+	UWorld* World = GetWorld();
+	if (!IsValid(World))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(World)"));
+		return;
+	}
 
 	if (!IsValid(PlayerCharacter1.Get()))
 	{
@@ -28,7 +37,7 @@ void ADineNFlyGameMode::StartPlay()
 		return;
 	}
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
 	if (!IsValid(PlayerController))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(PlayerController)"));
@@ -50,7 +59,7 @@ void ADineNFlyGameMode::StartPlay()
 	}
 
 	ADineNFlyCharacter* SpawnedCharacter1 = Cast<ADineNFlyCharacter>(
-		GetWorld()->SpawnActor<AActor>(PlayerCharacter1, PlayerStart1->GetActorLocation(), PlayerStart1->GetActorRotation()));
+		World->SpawnActor<AActor>(PlayerCharacter1, PlayerStart1->GetActorLocation(), PlayerStart1->GetActorRotation()));
 	if (!IsValid(SpawnedCharacter1))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(SpawnedCharacter1)"));
@@ -58,7 +67,7 @@ void ADineNFlyGameMode::StartPlay()
 	}
 
 	ADineNFlyCharacter* SpawnedCharacter2 = Cast<ADineNFlyCharacter>(
-		GetWorld()->SpawnActor<AActor>(PlayerCharacter2, PlayerStart2->GetActorLocation(), PlayerStart2->GetActorRotation()));
+		World->SpawnActor<AActor>(PlayerCharacter2, PlayerStart2->GetActorLocation(), PlayerStart2->GetActorRotation()));
 	if (!IsValid(SpawnedCharacter2))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(SpawnedCharacter2)"));
@@ -74,7 +83,7 @@ void ADineNFlyGameMode::StartPlay()
 
 	PlayerController->Possess(SpawnedCharacter1);
 
-	ADineNFlyAIController* AIController = GetWorld()->SpawnActor<ADineNFlyAIController>(ADineNFlyAIController::StaticClass());
+	ADineNFlyAIController* AIController = World->SpawnActor<ADineNFlyAIController>(ADineNFlyAIController::StaticClass());
 	if (!IsValid(AIController))
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADineNFlyGameMode::StartPlay !IsValid(AIController)"));

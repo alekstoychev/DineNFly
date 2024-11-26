@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "IInteractableStation.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -40,6 +41,17 @@ void ADineNFlyCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	ItemHold = GetWorld()->SpawnActor<AFoodResource>(Debug_FoodTest);
+	if (!IsValid(ItemHold))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ADineNFlyCharacter::BeginPlay !IsValid(ItemHold)"));
+	}
+
+	FAttachmentTransformRules Trans = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+	ItemHold->AttachToActor(this, Trans);
+	ItemHold->SetActorEnableCollision(false);
+	ItemHold->SetActorRelativeLocation(FVector(100, 0, 0));
 }
 
 void ADineNFlyCharacter::Move(const FInputActionValue& Value)
@@ -68,7 +80,21 @@ void ADineNFlyCharacter::Move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, MovementVector.X);
 }
 
+void ADineNFlyCharacter::SetNearbyStation(AIInteractableStation* station)
+{
+	NearbyInteractableStation = station;
+}
+
 void ADineNFlyCharacter::Interact()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ADineNFlyCharacter::Interact"));
+	if (IsValid(NearbyInteractableStation))
+	{
+		NearbyInteractableStation->Interact(ItemHold);
+		if (IsValid(ItemHold))
+		{
+			FAttachmentTransformRules Trans = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+			ItemHold->AttachToActor(this, Trans);
+			ItemHold->SetActorRelativeLocation(FVector(100, 0, 0));
+		}
+	}
 }
