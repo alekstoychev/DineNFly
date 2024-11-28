@@ -21,28 +21,37 @@ void ADineNFlyPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
-    UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-
-    if (Subsystem)
+    if (!bAreSettingsBound)
     {
-        if (KeyboardMappingContext)
+        UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+
+        if (Subsystem)
         {
-            Subsystem->AddMappingContext(KeyboardMappingContext, 0);
+            if (KeyboardMappingContext)
+            {
+                Subsystem->AddMappingContext(KeyboardMappingContext, 0);
+            }
+            if (ControllerMappingContext)
+            {
+                Subsystem->AddMappingContext(ControllerMappingContext, 0);
+            }
         }
-        if (ControllerMappingContext)
+
+        // Bind handlers for movement and other actions
+        if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
         {
-            Subsystem->AddMappingContext(ControllerMappingContext, 0);
+            EnhancedInputComponent->BindAction(KeyboardMoveAction, ETriggerEvent::Triggered, this, &ADineNFlyPlayerController::KeyboardMove);
+            EnhancedInputComponent->BindAction(KeyboardInteractAction, ETriggerEvent::Started, this, &ADineNFlyPlayerController::KeyboardInteract);
+
+            EnhancedInputComponent->BindAction(ControllerMoveAction, ETriggerEvent::Triggered, this, &ADineNFlyPlayerController::ControllerMove);
+            EnhancedInputComponent->BindAction(ControllerInteractAction, ETriggerEvent::Started, this, &ADineNFlyPlayerController::ControllerInteract);
+
+            bAreSettingsBound = true;
         }
     }
-
-    // Bind handlers for movement and other actions
-    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+    else
     {
-        EnhancedInputComponent->BindAction(KeyboardMoveAction, ETriggerEvent::Triggered, this, &ADineNFlyPlayerController::KeyboardMove);
-        EnhancedInputComponent->BindAction(KeyboardInteractAction, ETriggerEvent::Triggered, this, &ADineNFlyPlayerController::KeyboardInteract);
-
-        EnhancedInputComponent->BindAction(ControllerMoveAction, ETriggerEvent::Triggered, this, &ADineNFlyPlayerController::ControllerMove);
-        EnhancedInputComponent->BindAction(ControllerInteractAction, ETriggerEvent::Triggered, this, &ADineNFlyPlayerController::ControllerInteract);
+        UE_LOG(LogTemp, Warning, TEXT("ADineNFlyPlayerController::SetupInputComponent Settings already bound"));
     }
 }
 
