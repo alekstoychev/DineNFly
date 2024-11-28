@@ -24,7 +24,30 @@ AChoppingStation::AChoppingStation()
 
 void AChoppingStation::Interact(AFoodResource*& Resource)
 {
-	if (!IsValid(HeldResource))
+	if (IsValid(HeldResource))
+	{
+		if (IsValid(Resource))
+		{
+			//Character has resource, chopping station has a resource, therefore the character cannot interact with the station
+			UE_LOG(LogTemp, Error, TEXT("AChoppingStation::Interact IsValid(Resource)"));
+			return;
+		}
+
+		if (isChoppingComplete)
+		{
+			Resource = HeldResource;
+			HeldResource = nullptr;
+			isChoppingComplete = false;
+
+			UE_LOG(LogTemp, Warning, TEXT("AChoppingStation::Interact Meal Taken"));
+		}
+		else if (GetWorldTimerManager().IsTimerPaused(TimerHandleChopping))
+		{
+			GetWorldTimerManager().UnPauseTimer(TimerHandleChopping);
+			UE_LOG(LogTemp, Warning, TEXT("AChoppingStation::Interact unpaused TimerHandleChopping"));
+		}
+	}
+	else
 	{
 		if (!IsValid(Resource))
 		{
@@ -50,7 +73,7 @@ void AChoppingStation::Interact(AFoodResource*& Resource)
 				{
 					GetWorldTimerManager().SetTimer(TimerHandleChopping, this, 
 						&AChoppingStation::FTimerHandlerCompleteChopping, ChoppingTime, false);
-					UE_LOG(LogTemp, Warning, TEXT("AChoppingStation::Interact called TimerHandleChopping"));
+					UE_LOG(LogTemp, Warning, TEXT("AChoppingStation::Interact set TimerHandleChopping"));
 					RemainingChoppingTime = ChoppingTime;
 				}
 
@@ -58,14 +81,7 @@ void AChoppingStation::Interact(AFoodResource*& Resource)
 			}
 		}
 	}
-	else if (isChoppingComplete)
-	{
-		Resource = HeldResource;
-		HeldResource = nullptr;
-		isChoppingComplete = false;
-
-		UE_LOG(LogTemp, Warning, TEXT("AChoppingStation::Interact Meal Taken"));
-	}
+	
 }
 
 void AChoppingStation::BeginPlay()
@@ -81,10 +97,19 @@ void AChoppingStation::BeginPlay()
 
 void AChoppingStation::Tick(float DeltaTime)
 {
-	if (RemainingChoppingTime > 0.f)
+	if (GetWorldTimerManager().IsTimerActive(TimerHandleChopping) && RemainingChoppingTime > 0.f)
 	{
 		RemainingChoppingTime -= DeltaTime;
 		UpdateCountdownText();
+	}
+}
+
+void AChoppingStation::PauseChopping()
+{
+	if (GetWorldTimerManager().IsTimerActive(TimerHandleChopping))
+	{
+		GetWorldTimerManager().PauseTimer(TimerHandleChopping);
+		UE_LOG(LogTemp, Warning, TEXT("AChoppingStation::PauseChopping paused TimerHandleChopping"));
 	}
 }
 

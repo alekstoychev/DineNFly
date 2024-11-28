@@ -53,6 +53,7 @@ void ADineNFlyPlayerController::KeyboardMove(const FInputActionValue& Value)
         UE_LOG(LogTemp, Error, TEXT("ADineNFlyPlayerController::KeyboardMove !IsValid(Character1)"));
         return;
     }
+    Character1->StopInteract();
     Character1->Move(Value);
 }
 
@@ -73,6 +74,7 @@ void ADineNFlyPlayerController::ControllerMove(const FInputActionValue& Value)
         UE_LOG(LogTemp, Error, TEXT("ADineNFlyPlayerController::ControllerMove !IsValid(Character2)"));
         return;
     }
+    Character2->StopInteract();
     Character2->Move(Value);
 }
 

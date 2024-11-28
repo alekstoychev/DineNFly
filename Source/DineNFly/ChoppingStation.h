@@ -27,6 +27,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void PauseChopping();
+
 private:
 	// First item is the required resource
 	// Second item is the resulting resource
