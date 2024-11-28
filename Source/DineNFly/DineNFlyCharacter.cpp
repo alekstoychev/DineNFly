@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DineNFlyCharacter.h"
+#include "ChoppingStation.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
@@ -73,6 +74,15 @@ void ADineNFlyCharacter::Move(const FInputActionValue& Value)
 void ADineNFlyCharacter::SetNearbyStation(AIInteractableStation* station)
 {
 	NearbyInteractableStation = station;
+}
+
+void ADineNFlyCharacter::StopInteract()
+{
+	AChoppingStation* NearbyChoppingStation = Cast<AChoppingStation>(NearbyInteractableStation);
+	if (IsValid(NearbyChoppingStation))
+	{
+		NearbyChoppingStation->PauseChopping();
+	}
 }
 
 void ADineNFlyCharacter::Interact()

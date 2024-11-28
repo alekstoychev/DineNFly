@@ -28,6 +28,8 @@ public:
 	void Move(const FInputActionValue& Value);
 
 	void SetNearbyStation(class AIInteractableStation* station);
+
+	void StopInteract();
 protected:
 	// To add mapping context
 	virtual void BeginPlay();
