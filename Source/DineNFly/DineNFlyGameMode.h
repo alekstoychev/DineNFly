@@ -22,10 +22,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> PlayerCharacter2;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AChoppingStation> ChoppingStation;
-
 };
 
 

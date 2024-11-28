@@ -38,9 +38,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "amongus")
 	AFoodResource* ItemHold;
 
-	UPROPERTY(EditAnywhere, Category = "amongus")
-	TSubclassOf<AFoodResource> Debug_FoodTest;
-
 	UPROPERTY(VisibleAnywhere, Category = "amongus")
 	AIInteractableStation* NearbyInteractableStation;
 

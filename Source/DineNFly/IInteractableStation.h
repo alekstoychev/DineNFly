@@ -18,6 +18,7 @@ public:
 
 	virtual void Interact(class AFoodResource*& Resource);
 
+	virtual void LoadRecipes(class UDataTable* Recipes);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,5 +35,21 @@ protected:
 	class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere, Category = "Interaction Zone")
-	FVector BoxCollisionSize = FVector(100.f, 100.f, 100.f);
+	FVector BoxCollisionSize = FVector(75.f, 75.f, 112.5f);
+
+	UPROPERTY(EditAnywhere, Category = "Recipes")
+	class UDataTable* RecipesToLoad;
+
+	UPROPERTY(VisibleAnywhere)
+	class UTextRenderComponent* Debug_StationName;
+
+
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
