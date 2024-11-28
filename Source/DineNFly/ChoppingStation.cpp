@@ -6,7 +6,8 @@
 #include "FoodResource.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/BoxComponent.h"
-#include "DineNFlyCharacter.h"
+
+#include "RecipesDataTable.h"
 
 AChoppingStation::AChoppingStation()
 {
@@ -68,6 +69,31 @@ void AChoppingStation::Interact(AFoodResource*& Resource)
 	}
 }
 
+void AChoppingStation::LoadRecipes(UDataTable* RecipesTable)
+{
+	if (!IsValid(RecipesTable))
+	{
+		UE_LOG(LogTemp, Error, TEXT("AChoppingStation::LoadRecipes !IsValid(Recipes)"));
+		return;
+	}
+
+	const FString ContextString = "ContextString";
+
+	for (const FName& RecipeRow : RecipesTable->GetRowNames())
+	{
+		FChoppingStationRecipesRow* Row = RecipesTable->FindRow<FChoppingStationRecipesRow>(RecipeRow, ContextString);
+		if (Row)
+		{
+			Recipes.Add(Row->Resource, Row->Result);
+			UE_LOG(LogTemp, Warning, TEXT("Loaded Recipe: %s = %s"), *Row->Resource, *Row->Result);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("AChoppingStation::LoadRecipes Row == nullptr"));
+		}
+	}
+}
+
 void AChoppingStation::BeginPlay()
 {
 	Super::BeginPlay();
@@ -76,6 +102,19 @@ void AChoppingStation::BeginPlay()
 	{
 		BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AChoppingStation::OnBeginOverlap);
 		BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AChoppingStation::OnEndOverlap);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AChoppingStation::BeginPlay !IsValid(BoxCollision)"));
+	}
+
+	if (IsValid(RecipesToLoad))
+	{
+		LoadRecipes(RecipesToLoad);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AChoppingStation::BeginPlay !IsValid(RecipesToLoad)"));
 	}
 }
 
@@ -117,23 +156,5 @@ void AChoppingStation::UpdateCountdownText()
 	{
 		FString CountdownString = FString::Printf(TEXT("%.1f"), RemainingChoppingTime);
 		CountdownText->SetText(FText::FromString(CountdownString));
-	}
-}
-
-void AChoppingStation::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	ADineNFlyCharacter* PlayerCharacter = Cast<ADineNFlyCharacter>(OtherActor);
-	if (IsValid(PlayerCharacter))
-	{
-		PlayerCharacter->SetNearbyStation(this);
-	}
-}
-
-void AChoppingStation::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	ADineNFlyCharacter* PlayerCharacter = Cast<ADineNFlyCharacter>(OtherActor);
-	if (IsValid(PlayerCharacter))
-	{
-		PlayerCharacter->SetNearbyStation(nullptr);
 	}
 }

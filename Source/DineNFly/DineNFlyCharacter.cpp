@@ -42,16 +42,6 @@ void ADineNFlyCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	ItemHold = GetWorld()->SpawnActor<AFoodResource>(Debug_FoodTest);
-	if (!IsValid(ItemHold))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ADineNFlyCharacter::BeginPlay !IsValid(ItemHold)"));
-	}
-
-	FAttachmentTransformRules Trans = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-	ItemHold->AttachToActor(this, Trans);
-	ItemHold->SetActorEnableCollision(false);
-	ItemHold->SetActorRelativeLocation(FVector(100, 0, 0));
 }
 
 void ADineNFlyCharacter::Move(const FInputActionValue& Value)
