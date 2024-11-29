@@ -33,3 +33,15 @@ struct FChoppingStationRecipesRow : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Result;
 };
+
+USTRUCT(BlueprintType)
+struct FServingStationRecipesRow : public FTableRowBase
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString Resource;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Result;
+};
