@@ -18,10 +18,13 @@ public:
 
 	virtual void Interact(class AFoodResource*& Resource) override;
 
+	virtual void LoadRecipes(class UDataTable* RecipesTable) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
+	TMap<TPair<FString, FString>, FString> Recipes;
+
 	UPROPERTY(VisibleAnywhere)
 	AFoodResource* HeldResource;
 };
