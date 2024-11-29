@@ -53,4 +53,5 @@ private:
 	void ControllerMove(const FInputActionValue& Value);	
 	void ControllerInteract();
 
+	bool bAreSettingsBound = false;
 };
